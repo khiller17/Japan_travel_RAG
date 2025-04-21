@@ -7,6 +7,11 @@ def extract_text(html: str) -> str:
     for tag in soup(["script", "style", "header", "footer", "nav", "form"]):
         tag.decompose()
 
+    # Convert <li> elements into readable bullet points
+    for li in soup.find_all("li"):
+        li.insert_before(soup.new_tag("p"))
+        li.string = f"- {li.get_text(strip=True)}"
+
     main = soup.find("main") or soup.find("article") or soup.find(attrs={"role": "main"})
     text_source = main or soup
     return "\n".join(p.get_text(strip=True) for p in text_source.find_all("p"))
