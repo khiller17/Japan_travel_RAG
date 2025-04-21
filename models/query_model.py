@@ -22,6 +22,10 @@ class AskModel:
         self.tokenizer = mods.tokenizer
         self.model = mods.load_model()
 
+    @staticmethod
+    def truncate(text, max_words=100):
+        return " ".join(text.split()[:max_words])
+
     @lru_cache(maxsize=1024)
     def get_query_embedding(self, query: str) -> np.ndarray:
         emb = self.embedder.encode([query], convert_to_numpy=True)
@@ -38,8 +42,7 @@ class AskModel:
         pairs = [(query, d["text"]) for d in docs]
         scores = self.cross_encoder.predict(pairs)
         top_docs = [d for d, _ in sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)[:5]]
-
-        docs_text = "\n\n---\n\n".join(d["text"] for d in top_docs)
+        docs_text = "\n\n---\n\n".join(self.truncate(d["text"]) for d in top_docs[:3])
         prompt = (
             f"{self.SYSTEM_PROMPT}\n\n"
             f"Passages:\n{docs_text}\n\n"
@@ -47,7 +50,7 @@ class AskModel:
             f"Answer in one paragraph:"
         )
 
-        inputs = self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=2048)
+        inputs = self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=768)
         out = self.model.generate(
             **inputs,
             max_new_tokens=max_new_tokens,
