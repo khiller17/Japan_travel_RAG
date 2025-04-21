@@ -28,19 +28,22 @@ This project is a Retrieval-Augmented Generation (RAG) application designed to a
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
+```text
 Japan_travel_RAG/
-├── docs/  
-│   ├── load_docs.py          # Async scraping and text chunking, chroma DB
-│   ├── utils.py              # utils for chunking and chroma ingestion
-│   ├── urls.py      
-├── models/
-│   ├── load_models.py        # load tokenizer, embedder, load and quantize model
-│   ├── query_model.py        # prompt and query quantized model
-├── main.py                   # main entrypoint
+├── models/                       
+│   ├── load_models.py         # Load tokenizer, embedders, load and quantize model
+│   └── query_model.py         # generate responses
+├── docs/
+│   ├── load_docs.py           # scrape urls, chunk text, create chroma DB
+│   ├── urls.py
+│   └── utils.py                     
+├── main.py                    # main entrypoint                   
 ├── .gitignore
 └── environment.yml
+```
+
 
 ## Quickstart
 
@@ -48,10 +51,13 @@ Japan_travel_RAG/
    ```bash
    git clone https://github.com/khiller17/Japan_travel_RAG.git
    cd Japan_travel_RAG
+   ```
 
-2. **Create virtual environment**
+2. **Set up a virtual environment**
+   ```bash
    conda env create -f environment.yml
    conda activate rag_demo
+   ```
 
 3. **Run main.py**
 
