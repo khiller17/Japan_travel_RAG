@@ -7,17 +7,44 @@ from chromadb.errors import NotFoundError
 from docs.utils import extract_text
 
 class FetchDocuments:
+    """
+    Handles asynchronous fetching and cleaning of webpages, as well as ChromaDB initialization.
+
+    Attributes:
+        concurrency (int): Max concurrent requests.
+        batch_size (int): Number of URLs fetched per batch.
+    """
     def __init__(self, concurrency: int = 20, batch_size: int = 100):
+        """Initialize fetcher with concurrency and batch size."""
         self.concurrency = concurrency
         self.batch_size = batch_size
 
     @staticmethod
     async def fetch_page(client: httpx.AsyncClient, url: str) -> str:
+        """
+        Asynchronously fetch HTML content from a URL.
+
+        Args:
+            client (httpx.AsyncClient): The HTTP client instance.
+            url (str): The webpage URL.
+
+        Returns:
+            str: Raw HTML of the page.
+        """
         r = await client.get(url, timeout=10.0)
         r.raise_for_status()
         return r.text
 
     async def crawl_and_clean(self, urls: list[str]) -> list[dict]:
+        """
+        Crawl and clean a list of webpages concurrently.
+
+        Args:
+            urls (list[str]): List of URLs to scrape.
+
+        Returns:
+            list[dict]: Cleaned documents with 'url' and 'text' keys.
+        """
         sem = asyncio.Semaphore(self.concurrency)
         results = []
         async with httpx.AsyncClient() as client:
@@ -42,6 +69,15 @@ class FetchDocuments:
 
     @staticmethod
     def create_chroma_db(path):
+        """
+        Create or load a persistent ChromaDB collection.
+
+        Args:
+            path (str): Filesystem path for database storage.
+
+        Returns:
+            tuple: (chroma_client, collection) instances.
+        """
         chroma_client = chromadb.PersistentClient(
             path=path,
             settings=Settings(),

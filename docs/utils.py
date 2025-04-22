@@ -3,6 +3,15 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 
 def extract_text(html: str) -> str:
+    """
+    Extract main content text from a webpage's HTML using BeautifulSoup.
+
+    Args:
+        html (str): Raw HTML content.
+
+    Returns:
+        str: Extracted paragraph text joined by newlines.
+    """
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "header", "footer", "nav", "form"]):
         tag.decompose()
@@ -17,6 +26,17 @@ def extract_text(html: str) -> str:
     return "\n".join(p.get_text(strip=True) for p in text_source.find_all("p"))
 
 def chunk_text(text: str, max_words: int = 500, overlap: int = 50):
+    """
+    Split text into overlapping word chunks.
+
+    Args:
+        text (str): Input text to chunk.
+        max_words (int): Max words per chunk.
+        overlap (int): Number of overlapping words between chunks.
+
+    Yields:
+        str: A chunk of the input text.
+    """
     words = text.split()
     start = 0
     while start < len(words):
@@ -25,6 +45,15 @@ def chunk_text(text: str, max_words: int = 500, overlap: int = 50):
         start += max_words - overlap
 
 def docs_to_passages(docs: list[dict]) -> list[dict]:
+    """
+    Convert cleaned documents to smaller passages for embedding.
+
+    Args:
+        docs (list[dict]): Documents with 'url' and 'text' fields.
+
+    Returns:
+        list[dict]: Passages with 'url' and chunked 'text'.
+    """
     passages = []
     for doc in docs:
         for chunk in chunk_text(doc["text"]):
@@ -35,6 +64,16 @@ def docs_to_passages(docs: list[dict]) -> list[dict]:
 def ingest_into_chromadb(passages: list[dict], embedder: SentenceTransformer,
                          client: chromadb.Client, collection_name: str = "japan_travel",
                          batch_size: int = 64):
+    """
+    Encode and store passages into ChromaDB with metadata.
+
+    Args:
+        passages (list[dict]): List of {'url', 'text'} chunks.
+        embedder (SentenceTransformer): Embedding model instance.
+        client (chromadb.Client): ChromaDB client.
+        collection_name (str): Name of the vector collection.
+        batch_size (int): Embedding batch size.
+    """
     try:
         col = client.get_collection(collection_name)
     except ValueError:

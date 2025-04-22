@@ -13,6 +13,13 @@ os.environ["MKL_NUM_THREADS"] = "8"
 torch.set_num_threads(8)
 
 async def main():
+    """
+    Entry point for the Japan Travel RAG application.
+
+    - Initializes ChromaDB and Phi-2 model.
+    - Crawls and ingests documents if the database is empty.
+    - Accepts user queries in a loop and returns RAG-generated answers.
+    """
     seed_urls = urls.seed_urls
     # TODO add args to adjust batch size and concurrency in FetchDocuments
     fetched_docs = FetchDocuments()
