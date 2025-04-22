@@ -3,7 +3,7 @@
 This project is a Retrieval-Augmented Generation (RAG) application designed to answer travel-related questions about Japan. It uses a local, quantized language model and a curated set of Japanese food blogs and restaurant review sites to provide relevant, conversational answers—without requiring GPU support.
 
 > ⚠️ **Work in Progress**:  
-> The current version focuses primarily on **food and restaurant recommendations** in Japan. It uses a limited set of URLs for data retrieval. Support for additional topics and broader content coverage is planned for future updates. Future updates will also make the answers more concise.
+> The current version focuses primarily on **food and restaurant recommendations** in Japan. It uses a limited set of URLs for data retrieval. Support for additional topics and broader content coverage is planned for future updates. Future updates will also aim to reduce the occasional unnecessary addition to the end of an answer.
 
 ---
 
@@ -65,4 +65,4 @@ Japan_travel_RAG/
 
 Your question (blank to exit): What’s a good ramen shop in Shibuya?
 
-Answer in one paragraph: Ichiran Shibuya is a popular ramen spot known for its tonkotsu broth and solo dining booths. It's centrally located and ideal for travelers looking for a quick, high-quality meal.
+Ichiran Shibuya is a popular ramen spot known for its tonkotsu broth and solo dining booths. It's centrally located and ideal for travelers looking for a quick, high-quality meal.
