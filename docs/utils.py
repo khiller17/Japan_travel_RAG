@@ -1,28 +1,28 @@
+import re
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer
 import chromadb
 
 def extract_text(html: str) -> str:
-    """
-    Extract main content text from a webpage's HTML using BeautifulSoup.
-
-    Args:
-        html (str): Raw HTML content.
-
-    Returns:
-        str: Extracted paragraph text joined by newlines.
-    """
     soup = BeautifulSoup(html, "html.parser")
+
+    # Remove irrelevant tags
     for tag in soup(["script", "style", "header", "footer", "nav", "form"]):
         tag.decompose()
 
-    # Convert <li> elements into readable bullet points
+    # Handle list items: convert to sentences
     for li in soup.find_all("li"):
-        li.insert_before(soup.new_tag("p"))
-        li.string = f"- {li.get_text(strip=True)}"
+        # Clean "#2 - Place" patterns
+        li_text = re.sub(r"^#?\d+\s*[-–:]\s*", "", li.get_text(strip=True))
+        # Turn into a sentence (not a bullet point)
+        new_tag = soup.new_tag("p")
+        new_tag.string = li_text
+        li.insert_before(new_tag)
+        li.decompose()
 
     main = soup.find("main") or soup.find("article") or soup.find(attrs={"role": "main"})
     text_source = main or soup
+
     return "\n".join(p.get_text(strip=True) for p in text_source.find_all("p"))
 
 def chunk_text(text: str, max_words: int = 500, overlap: int = 50):
