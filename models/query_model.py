@@ -16,7 +16,7 @@ class AskModel:
         "You are a helpful and reliable Japan travel assistant. "
         "Answer concisely and only using the information provided in the passages. "
         "Answer in complete sentences. "
-        "Summarize key recommendations clearly in paragraph form. Do not reproduce lists or bullet points."
+        "Summarize key recommendations clearly in paragraph form. "
         "Do not speculate or include unrelated content. "
         "If the answer is not in the passages, say: 'I couldn’t find that information.'"
     )
